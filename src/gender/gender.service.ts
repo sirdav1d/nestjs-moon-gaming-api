@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handleError';
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
 import { Gender } from './entities/gender.entity';
@@ -11,7 +12,7 @@ export class GenderService {
   create(createGenderDto: CreateGenderDto): Promise<Gender> {
     const response: Gender = { ...createGenderDto };
 
-    return this.prisma.gender.create({ data: response });
+    return this.prisma.gender.create({ data: response }).catch(handleError);
   }
 
   findAll(): Promise<Gender[]> {
@@ -21,20 +22,22 @@ export class GenderService {
   async findById(id: string) {
     const response = await this.prisma.gender.findUnique({ where: { id } });
     if (!response) {
-      throw new NotFoundException(`ID: '${id}' inválido`);
+      throw new NotFoundException(`ID: '${id}' INVÁLIDO`);
     }
     return this.prisma.gender.findUnique({ where: { id } });
   }
 
-  findOne(id: string): Promise<Gender> {
+  async findOne(id: string): Promise<Gender> {
     return this.findById(id);
   }
 
-  update(id: string, updateGenderDto: UpdateGenderDto): Promise<Gender> {
-    this.findById(id);
+  async update(id: string, updateGenderDto: UpdateGenderDto): Promise<Gender> {
+    await this.findById(id);
     const response: Partial<Gender> = { ...updateGenderDto };
 
-    return this.prisma.gender.update({ where: { id }, data: response });
+    return this.prisma.gender
+      .update({ where: { id }, data: response })
+      .catch(handleError);
   }
 
   async delete(id: string): Promise<void> {
