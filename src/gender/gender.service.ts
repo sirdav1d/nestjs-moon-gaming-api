@@ -19,23 +19,26 @@ export class GenderService {
   }
 
   async findById(id: string) {
-    try {
-      return await this.prisma.gender.findUnique({ where: { id } });
-    } catch (e) {
-      throw new NotFoundException(`ID: ${id} inválido`);
+    const response = await this.prisma.gender.findUnique({ where: { id } });
+    if (!response) {
+      throw new NotFoundException(`ID: '${id}' inválido`);
     }
+    return this.prisma.gender.findUnique({ where: { id } });
   }
 
   findOne(id: string): Promise<Gender> {
     return this.findById(id);
   }
 
-  update(id: string, updateGenderDto: UpdateGenderDto) {
+  update(id: string, updateGenderDto: UpdateGenderDto): Promise<Gender> {
     this.findById(id);
-    return `This action updates a #${id} gender`;
+    const response: Partial<Gender> = { ...updateGenderDto };
+
+    return this.prisma.gender.update({ where: { id }, data: response });
   }
 
-  delete(id: string) {
-    return `This action removes a #${id} gender`;
+  async delete(id: string): Promise<void> {
+    await this.findById(id);
+    await this.prisma.gender.delete({ where: { id } });
   }
 }

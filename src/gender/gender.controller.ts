@@ -48,7 +48,10 @@ export class GenderController {
   @ApiOperation({
     summary: 'Edita um gênero de jogos pelo ID',
   })
-  update(@Param('id') id: string, @Body() updateGenderDto: UpdateGenderDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateGenderDto: UpdateGenderDto,
+  ): Promise<Gender> {
     return this.genderService.update(id, updateGenderDto);
   }
 
@@ -57,7 +60,7 @@ export class GenderController {
   @ApiOperation({
     summary: 'Deleta um gênero de jogos pelo ID',
   })
-  delete(@Param('id') id: string) {
-    return this.genderService.delete(id);
+  delete(@Param('id') id: string): void {
+    this.genderService.delete(id);
   }
 }
