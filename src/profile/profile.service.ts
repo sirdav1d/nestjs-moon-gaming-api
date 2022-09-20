@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleError } from 'src/utils/handleError';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -9,8 +10,8 @@ import { Profile } from './entities/profile.entity';
 export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createProfileDto: CreateProfileDto): Promise<Profile> {
-    const response: Profile = { ...createProfileDto };
+  async create(createProfileDto: CreateProfileDto) {
+    const response: Prisma.OrderCreateInput = { ...createProfileDto };
 
     try {
       return await this.prisma.profile.create({ data: response });
