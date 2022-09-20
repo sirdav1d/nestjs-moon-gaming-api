@@ -30,7 +30,7 @@ export class GenderController {
 
   @Get()
   @ApiOperation({
-    summary: 'Lista todos os gêneros de jogos',
+    summary: 'Imprime todos os gêneros de jogos',
   })
   findAll(): Promise<Gender[]> {
     return this.genderService.findAll();
@@ -38,7 +38,7 @@ export class GenderController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'Lista um gênero de jogos pelo ID',
+    summary: 'Imprime um gênero de jogos pelo ID',
   })
   findOne(@Param('id') id: string): Promise<Gender> {
     return this.genderService.findOne(id);
