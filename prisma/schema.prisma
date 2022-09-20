@@ -13,4 +13,30 @@ datasource db {
 model Gender {
   id   String @id @default(uuid())
   name String @unique
+
+  @@map("gender")
+}
+
+model Game {
+  id                   String @id @default(uuid())
+  title                String @unique
+  cover_image_url      String
+  description          String
+  year                 Int
+  imdb_score           Float
+  trailer_youtube_url  String
+  gameplay_youtube_url String
+
+  @@map("game")
+
+}
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  cpf      String  @unique
+  isAdmin  Boolean
+
+  @@map("user")
 }
