@@ -11,15 +11,18 @@ datasource db {
 }
 
 model Gender {
-  id   String @id @default(uuid())
-  name String @unique
+  id    String @id @default(uuid())
+  games Game[]
+  name  String @unique
 
   @@map("gender")
 }
 
 model Game {
-  id                   String @id @default(uuid())
-  title                String @unique
+  id                   String    @id @default(uuid())
+  profiles             Profile[]
+  genders              Gender[]
+  title                String    @unique
   cover_image_url      String
   description          String
   year                 Int
@@ -28,15 +31,27 @@ model Game {
   gameplay_youtube_url String
 
   @@map("game")
-
 }
+
 model User {
-  id       String  @id @default(uuid())
+  id       String    @id @default(uuid())
   name     String
-  email    String  @unique
+  email    String    @unique
   password String
-  cpf      String  @unique
+  cpf      String    @unique
   isAdmin  Boolean
+  Profile  Profile[]
 
   @@map("user")
+}
+
+model Profile {
+  id        String @id @default(uuid())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+  games     Game[]
+  title     String
+  image_url String
+
+  @@map("profile")
 }
