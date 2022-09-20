@@ -14,6 +14,15 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private userSelect = {
+    cpf: true,
+    email: true,
+    name: true,
+    id: true,
+    isAdmin: true,
+    password: false,
+  };
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     if (createUserDto.password != createUserDto.confirmPass) {
       throw new BadRequestException('As senhas informadas são diferentes.');
@@ -29,7 +38,11 @@ export class UserService {
   }
 
   findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+    return this.prisma.user
+      .findMany({
+        select: this.userSelect,
+      })
+      .catch(handleError);
   }
 
   async findById(id: string) {
@@ -37,11 +50,14 @@ export class UserService {
     if (!response) {
       throw new NotFoundException(`ID: '${id}' INVÁLIDO`);
     }
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: this.userSelect,
+    });
   }
 
   async findOne(id: string): Promise<User> {
-    return this.findById(id);
+    return this.findById(id).catch(handleError);
   }
 
   async update(id: string, createUserDto: UpdateUserDto): Promise<User> {
@@ -63,6 +79,7 @@ export class UserService {
         .update({
           data: updatedUser,
           where: { id },
+          select: this.userSelect,
         })
         .catch(handleError);
       return response;
@@ -70,6 +87,6 @@ export class UserService {
   }
   async delete(id: string): Promise<void> {
     await this.findById(id);
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.delete({ where: { id } }).catch(handleError);
   }
 }
