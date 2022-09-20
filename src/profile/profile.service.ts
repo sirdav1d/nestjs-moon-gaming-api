@@ -9,14 +9,22 @@ import { Profile } from './entities/profile.entity';
 export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createProfileDto: CreateProfileDto): Promise<Profile> {
+  async create(createProfileDto: CreateProfileDto): Promise<Profile> {
     const response: Profile = { ...createProfileDto };
 
-    return this.prisma.profile.create({ data: response }).catch(handleError);
+    try {
+      return await this.prisma.profile.create({ data: response });
+    } catch (error) {
+      return handleError(error);
+    }
   }
 
-  findAll(): Promise<Profile[]> {
-    return this.prisma.profile.findMany();
+  async findAll(): Promise<Profile[]> {
+    try {
+      return await this.prisma.profile.findMany();
+    } catch (error) {
+      return handleError(error);
+    }
   }
 
   async findById(id: string) {
@@ -28,7 +36,7 @@ export class ProfileService {
   }
 
   async findOne(id: string): Promise<Profile> {
-    return this.findById(id);
+    return this.findById(id).catch(handleError);
   }
 
   async update(
@@ -45,6 +53,6 @@ export class ProfileService {
 
   async delete(id: string): Promise<void> {
     await this.findById(id);
-    await this.prisma.profile.delete({ where: { id } });
+    await this.prisma.profile.delete({ where: { id } }).catch(handleError);
   }
 }
