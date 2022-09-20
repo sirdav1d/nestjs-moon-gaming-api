@@ -10,8 +10,8 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createUserDto: CreateUserDto): Promise<User> {
-    const response = { ...createUserDto };
     delete createUserDto.confirmPass;
+    const response: User = { ...createUserDto };
     return this.prisma.user.create({ data: response }).catch(handleError);
   }
 
@@ -32,6 +32,7 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    delete updateUserDto.confirmPass;
     await this.findById(id);
     const response: Partial<User> = { ...updateUserDto };
 
