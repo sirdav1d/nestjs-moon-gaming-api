@@ -1,18 +1,31 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleError } from 'src/utils/handleError';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    if (createUserDto.password != createUserDto.confirmPass) {
+      throw new BadRequestException('As senhas informadas são diferentes.');
+    }
+
     delete createUserDto.confirmPass;
-    const response: User = { ...createUserDto };
-    return this.prisma.user.create({ data: response }).catch(handleError);
+
+    const createdUser: User = {
+      ...createUserDto,
+      password: await bcrypt.hash(createUserDto.password, 10),
+    };
+    return this.prisma.user.create({ data: createdUser }).catch(handleError);
   }
 
   findAll(): Promise<User[]> {
@@ -31,16 +44,30 @@ export class UserService {
     return this.findById(id);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    delete updateUserDto.confirmPass;
+  async update(id: string, createUserDto: UpdateUserDto): Promise<User> {
     await this.findById(id);
-    const response: Partial<User> = { ...updateUserDto };
 
-    return this.prisma.user
-      .update({ where: { id }, data: response })
-      .catch(handleError);
+    if (createUserDto.password) {
+      if (createUserDto.password != createUserDto.confirmPass) {
+        throw new BadRequestException('As senhas informadas são diferentes.');
+      }
+    }
+
+    delete createUserDto.confirmPass;
+    const updatedUser: Partial<User> = { ...createUserDto };
+
+    if (updatedUser.password) {
+      updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
+
+      const response = await this.prisma.user
+        .update({
+          data: updatedUser,
+          where: { id },
+        })
+        .catch(handleError);
+      return response;
+    }
   }
-
   async delete(id: string): Promise<void> {
     await this.findById(id);
     await this.prisma.user.delete({ where: { id } });
