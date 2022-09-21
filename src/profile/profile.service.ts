@@ -11,13 +11,28 @@ export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProfileDto: CreateProfileDto) {
-    const response: Prisma.OrderCreateInput = { ...createProfileDto };
-
-    try {
-      return await this.prisma.profile.create({ data: response });
-    } catch (error) {
-      return handleError(error);
-    }
+    const response: Prisma.ProfileCreateInput = {
+      user: {
+        connect: { id: createProfileDto.userId },
+      },
+      games: {
+        connect: createProfileDto.games.map((gameId) => ({ id: gameId })),
+      },
+      title: createProfileDto.title,
+      image_url: createProfileDto.image_url,
+    };
+    return await this.prisma.profile
+      .create({
+        data: response,
+        select: {
+          id: true,
+          title: true,
+          image_url: true,
+          user: { select: { name: true, isAdmin: true } },
+          games: { select: { title: true } },
+        },
+      })
+      .catch(handleError);
   }
 
   async findAll(): Promise<Profile[]> {
@@ -40,17 +55,21 @@ export class ProfileService {
     return this.findById(id).catch(handleError);
   }
 
-  async update(
-    id: string,
-    updateProfileDto: UpdateProfileDto,
-  ): Promise<Profile> {
-    await this.findById(id);
-    const response: Partial<Profile> = { ...updateProfileDto };
+  // async update(
+  //   id: string,
+  //   createProfileDto: UpdateProfileDto,
+  // ): Promise<Profile> {
+  //   await this.findById(id);
 
-    return this.prisma.profile
-      .update({ where: { id }, data: response })
-      .catch(handleError);
-  }
+  //   const data: Partial<Profile> = { ...createProfileDto };
+
+  //   return this.prisma.profile
+  //     .update({
+  //       where: { id },
+  //       data,
+  //     })
+  //     .catch(handleError);
+  // }
 
   async delete(id: string): Promise<void> {
     await this.findById(id);
