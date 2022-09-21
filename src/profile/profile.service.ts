@@ -36,19 +36,30 @@ export class ProfileService {
   }
 
   async findAll(): Promise<Profile[]> {
-    try {
-      return await this.prisma.profile.findMany();
-    } catch (error) {
-      return handleError(error);
-    }
+    return this.prisma.profile
+      .findMany({
+        select: {
+          id: true,
+          title: true,
+          image_url: true,
+          user: { select: { name: true, isAdmin: true } },
+          _count: { select: { games: true } },
+        },
+      })
+      .catch(handleError);
   }
 
   async findById(id: string) {
-    const response = await this.prisma.profile.findUnique({ where: { id } });
+    const response = await this.prisma.profile.findUnique({
+      where: { id },
+    });
     if (!response) {
       throw new NotFoundException(`ID: '${id}' INVÁLIDO`);
     }
-    return this.prisma.profile.findUnique({ where: { id } });
+    return this.prisma.profile.findUnique({
+      where: { id },
+      select: { user: { select: { name: true } }, games: true },
+    });
   }
 
   async findOne(id: string): Promise<Profile> {

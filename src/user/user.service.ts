@@ -15,7 +15,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   private userSelect = {
-    cpf: true,
+    cpf: false,
     email: true,
     name: true,
     id: true,
