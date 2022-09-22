@@ -21,6 +21,7 @@ export class UserService {
     id: true,
     isAdmin: true,
     password: false,
+    profiles: true,
   };
 
   async create(createUserDto: CreateUserDto): Promise<User> {

@@ -10,10 +10,10 @@ import { Profile } from './entities/profile.entity';
 export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createProfileDto: CreateProfileDto) {
+  async create(userId: string, createProfileDto: CreateProfileDto) {
     const response: Prisma.ProfileCreateInput = {
       user: {
-        connect: { id: createProfileDto.userId },
+        connect: { id: userId },
       },
       games: {
         connect: createProfileDto.games.map((gameId) => ({ id: gameId })),
@@ -71,12 +71,12 @@ export class ProfileService {
     return this.findById(id).catch(handleError);
   }
 
-  async update(id: string, createProfileDto: UpdateProfileDto) {
+  async update(id: string, userId: string, createProfileDto: UpdateProfileDto) {
     await this.findById(id);
 
     const response: Prisma.ProfileUpdateInput = {
       user: {
-        connect: { id: createProfileDto.userId },
+        connect: { id: userId },
       },
       games: {
         connect: createProfileDto.games.map((gameId) => ({ id: gameId })),

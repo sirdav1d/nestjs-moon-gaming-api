@@ -40,7 +40,7 @@ model User {
   password String
   cpf      String    @unique
   isAdmin  Boolean
-  Profile  Profile[]
+  profiles  Profile[]
 
   @@map("user")
 }

@@ -16,7 +16,9 @@ export class GameService {
   }
 
   findAll(): Promise<Game[]> {
-    return this.prisma.game.findMany();
+    return this.prisma.game.findMany({
+      include: { genders: { select: { name: true } } },
+    });
   }
 
   async findById(id: string) {
@@ -24,7 +26,10 @@ export class GameService {
     if (!response) {
       throw new NotFoundException(`ID: '${id}' INVÁLIDO`);
     }
-    return this.prisma.game.findUnique({ where: { id } });
+    return this.prisma.game.findUnique({
+      where: { id },
+      include: { genders: { select: { name: true } } },
+    });
   }
 
   async findOne(id: string): Promise<Game> {
@@ -36,7 +41,11 @@ export class GameService {
     const response: Partial<Game> = { ...updateGameDto };
 
     return this.prisma.game
-      .update({ where: { id }, data: response })
+      .update({
+        where: { id },
+        data: response,
+        include: { genders: { select: { name: true } } },
+      })
       .catch(handleError);
   }
 

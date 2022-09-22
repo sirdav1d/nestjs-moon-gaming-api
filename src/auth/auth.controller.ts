@@ -9,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/user/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/create-auth.dto';
+import { LoggedUser } from './Logged-auth.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -33,7 +35,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Retorna o usuário autenticado no momento',
   })
-  validToken() {
-    return { message: 'validado' };
+  validToken(@LoggedUser() user: User) {
+    return user;
   }
 }

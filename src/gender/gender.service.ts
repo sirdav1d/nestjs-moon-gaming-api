@@ -16,7 +16,9 @@ export class GenderService {
   }
 
   findAll(): Promise<Gender[]> {
-    return this.prisma.gender.findMany();
+    return this.prisma.gender.findMany({
+      select: { name: true, id: true, _count: { select: { games: true } } },
+    });
   }
 
   async findById(id: string) {
@@ -24,7 +26,21 @@ export class GenderService {
     if (!response) {
       throw new NotFoundException(`ID: '${id}' INVÁLIDO`);
     }
-    return this.prisma.gender.findUnique({ where: { id } });
+    return this.prisma.gender.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        games: {
+          select: {
+            id: true,
+            cover_image_url: true,
+            imdb_score: true,
+            title: true,
+          },
+        },
+      },
+    });
   }
 
   async findOne(id: string): Promise<Gender> {
@@ -36,7 +52,22 @@ export class GenderService {
     const response: Partial<Gender> = { ...updateGenderDto };
 
     return this.prisma.gender
-      .update({ where: { id }, data: response })
+      .update({
+        where: { id },
+        data: response,
+        select: {
+          id: true,
+          name: true,
+          games: {
+            select: {
+              id: true,
+              cover_image_url: true,
+              imdb_score: true,
+              title: true,
+            },
+          },
+        },
+      })
       .catch(handleError);
   }
 
