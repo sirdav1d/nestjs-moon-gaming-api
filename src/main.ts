@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Moon Gaming')
     .setDescription('Aplicação para gestão de plataforma de jogos')
     .setVersion('2.0.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
