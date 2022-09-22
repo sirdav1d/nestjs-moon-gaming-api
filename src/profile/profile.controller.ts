@@ -44,16 +44,16 @@ export class ProfileController {
     return this.profileService.findOne(id);
   }
 
-  // @Patch(':id')
-  // @ApiOperation({
-  //   summary: 'Edita um perfil de usuário pelo ID',
-  // })
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateProfileDto: UpdateProfileDto,
-  // ): Promise<Profile> {
-  //   return this.profileService.update(id, updateProfileDto);
-  // }
+  @Patch(':id')
+  @ApiOperation({
+    summary: 'Edita um perfil de usuário pelo ID',
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
+    return this.profileService.update(id, updateProfileDto);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -58,7 +58,12 @@ export class ProfileService {
     }
     return this.prisma.profile.findUnique({
       where: { id },
-      select: { user: { select: { name: true } }, games: true },
+      select: {
+        user: { select: { name: true } },
+        image_url: true,
+        title: true,
+        games: true,
+      },
     });
   }
 
@@ -66,21 +71,34 @@ export class ProfileService {
     return this.findById(id).catch(handleError);
   }
 
-  // async update(
-  //   id: string,
-  //   createProfileDto: UpdateProfileDto,
-  // ): Promise<Profile> {
-  //   await this.findById(id);
+  async update(id: string, createProfileDto: UpdateProfileDto) {
+    await this.findById(id);
 
-  //   const data: Partial<Profile> = { ...createProfileDto };
+    const response: Prisma.ProfileUpdateInput = {
+      user: {
+        connect: { id: createProfileDto.userId },
+      },
+      games: {
+        connect: createProfileDto.games.map((gameId) => ({ id: gameId })),
+      },
+      title: createProfileDto.title,
+      image_url: createProfileDto.image_url,
+    };
 
-  //   return this.prisma.profile
-  //     .update({
-  //       where: { id },
-  //       data,
-  //     })
-  //     .catch(handleError);
-  // }
+    return this.prisma.profile
+      .update({
+        where: { id },
+        data: response,
+        select: {
+          id: true,
+          title: true,
+          image_url: true,
+          user: { select: { name: true, isAdmin: true } },
+          games: { select: { title: true } },
+        },
+      })
+      .catch(handleError);
+  }
 
   async delete(id: string): Promise<void> {
     await this.findById(id);
