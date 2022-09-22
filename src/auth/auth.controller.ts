@@ -1,5 +1,14 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/create-auth.dto';
 
@@ -18,7 +27,15 @@ export class AuthController {
     return this.authService.login(loginAuthDto);
   }
 
-  // @Get()
+  @Get()
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Retorna o usuário autenticado no momento',
+  })
+  validToken() {
+    return { message: 'validado' };
+  }
   // findAll() {
   //   return this.authService.findAll();
   // }
