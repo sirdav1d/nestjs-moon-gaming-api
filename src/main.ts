@@ -11,6 +11,12 @@ async function bootstrap() {
     .setTitle('Moon Gaming')
     .setDescription('Aplicação para gestão de plataforma de jogos')
     .setVersion('2.0.0')
+    .addTag('Status')
+    .addTag('Auth')
+    .addTag('User')
+    .addTag('Profile')
+    .addTag('Gender')
+    .addTag('Game')
     .addBearerAuth()
     .build();
 
