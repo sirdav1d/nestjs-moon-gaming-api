@@ -35,7 +35,9 @@ export class UserService {
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
     };
-    return this.prisma.user.create({ data: createdUser }).catch(handleError);
+    return this.prisma.user
+      .create({ data: createdUser, select: this.userSelect })
+      .catch(handleError);
   }
 
   findAll(): Promise<User[]> {
