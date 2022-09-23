@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleError } from 'src/utils/handleError';
 import { CreateGenderDto } from './dto/create-gender.dto';
@@ -10,7 +11,12 @@ export class GenderService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createGenderDto: CreateGenderDto): Promise<Gender> {
-    const response: Gender = { ...createGenderDto };
+    const response: Prisma.GenderCreateInput = {
+      games: {
+        connect: createGenderDto.games.map((gameId) => ({ id: gameId })),
+      },
+      name: createGenderDto.name,
+    };
 
     return this.prisma.gender.create({ data: response }).catch(handleError);
   }
@@ -47,9 +53,14 @@ export class GenderService {
     return this.findById(id);
   }
 
-  async update(id: string, updateGenderDto: UpdateGenderDto): Promise<Gender> {
+  async update(id: string, createGenderDto: UpdateGenderDto): Promise<Gender> {
     await this.findById(id);
-    const response: Partial<Gender> = { ...updateGenderDto };
+    const response: Prisma.GenderUpdateInput = {
+      games: {
+        connect: createGenderDto.games.map((gameId) => ({ id: gameId })),
+      },
+      name: createGenderDto.name,
+    };
 
     return this.prisma.gender
       .update({
