@@ -12,7 +12,12 @@ export class GameService {
   create(createGameDto: CreateGameDto): Promise<Game> {
     const response: Game = { ...createGameDto };
 
-    return this.prisma.game.create({ data: response }).catch(handleError);
+    return this.prisma.game
+      .create({
+        data: response,
+        include: { genders: { select: { name: true } } },
+      })
+      .catch(handleError);
   }
 
   findAll(): Promise<Game[]> {

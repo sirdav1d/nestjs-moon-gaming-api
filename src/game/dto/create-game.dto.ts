@@ -67,4 +67,7 @@ export class CreateGameDto {
     example: 'https://youtu.be/2qVmxM6b784',
   })
   gameplay_youtube_url: string;
+
+  profiles?: string[];
+  genders?: string[];
 }
