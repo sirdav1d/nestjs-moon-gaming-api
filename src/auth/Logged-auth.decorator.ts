@@ -5,5 +5,6 @@ export const LoggedUser = createParamDecorator((_, ctx: ExecutionContext) => {
   const user = request.user;
 
   delete user.password;
+  delete user.cpf;
   return user;
 });
