@@ -3,7 +3,7 @@
 O projeto é inspirado na Xbox Live, plataforma da Microsoft para o console de videogame Xbox.
 O objetivo é que usuários possam se cadastrar, selecionar diferentes perfis (semelhante ao sistema de perfis da Netflix) e acessar os jogos disponíveis.
 
-#### Instalação
+## Instalação
 Clone esse projeto em seu computador com o comando:
 git clone: [https://github.com/sirdav1d/nestjs-moon-gaming-api]
 
@@ -12,25 +12,25 @@ cd [Nome da pasta do seu Projeto]
 
 Já na pasta da aplicação em seu terminal, digite o seguinte comando:
 npm install
-#### desensolvimento
+## Desensolvimento
 
 Após ter configurado o projeto e ter aguardado a instalação das dependencias de desenvolvimento, execute o comando:
 
 npm run start
 
-#### watch mode
+## Watch mode
 npm run start:dev
 
-#### modo de produção
+## Modo de produção
 npm run start:prod
 
-#### unit tests
+## Unit tests
 npm run test
 
-#### e2e tests
+## e2e tests
 npm run test:e2e
 
-#### test coverage
+## Test coverage
 npm run test:cov
 
 ## Funcionalidades
@@ -42,7 +42,4 @@ npm run test:cov
 - CRUD de gêneros de jogos;
 ## Autores
 
-**David Diniz Dos Santos** - Programador e Escritor da Documentação - [Github](https://github.com/sirdav1d)
-
----
-Autor [David Diniz Dos Santos](https://www.linkedin.com/in/david-dev-/)
+**David Diniz Dos Santos** - Programador e Escritor da Documentação - [Github](https://github.com/sirdav1d) - [Linkedin](https://www.linkedin.com/in/david-dev-/)
